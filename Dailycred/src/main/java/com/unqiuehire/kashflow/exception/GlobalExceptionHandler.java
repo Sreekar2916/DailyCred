@@ -11,7 +11,7 @@ public class GlobalExceptionHandler {
 
     // Handle Resource Not Found
     @ExceptionHandler(ResourceNotFoundException.class)
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiResponse<Object> handleResourceNotFound(ResourceNotFoundException ex) {
 
         return new ApiResponse<>(
