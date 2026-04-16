@@ -10,4 +10,5 @@ public interface BorrowerRepository extends JpaRepository<Borrower,Long> {
 
     // 🔹 Check if PAN already exists
     Optional<Borrower> findByPanCardNumber(String panCardNumber);
+    Optional<Borrower> findByPhoneNumber(String phoneNumber);
 }
