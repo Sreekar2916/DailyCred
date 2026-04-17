@@ -27,6 +27,7 @@ public class BorrowerServiceImpl implements BorrowerService {
 
         String aadhar = borrowerRequestDto.getAadharCardNumber();
         String pan = borrowerRequestDto.getPanCardNumber();
+        String phone = borrowerRequestDto.getPhoneNumber();
 
         if ((aadhar == null || aadhar.trim().isEmpty()) &&
                 (pan == null || pan.trim().isEmpty())) {
@@ -68,9 +69,23 @@ public class BorrowerServiceImpl implements BorrowerService {
             }
         }
 
+        if(phone != null && !phone.trim().isEmpty())
+        {
+            Optional<Borrower> existingphone = repo.findByPhoneNumber(phone.trim());
+            if (existingphone.isPresent())
+            {
+                return new ApiResponse<>(
+                        ApiStatus.FAILURE,
+                        "failed should be phonenumber already existed",
+                        null
+                );
+            }
+        }
+
         Borrower borrower = mapToEntity(borrowerRequestDto);
         borrower.setAadharCardNumber(aadhar != null ? aadhar.trim() : null);
         borrower.setPanCardNumber(pan != null ? pan.trim() : null);
+        borrower.setPhoneNumber(phone!=null ? phone.trim() : null);
 
         Borrower savedBorrower = repo.save(borrower);
 
@@ -132,6 +147,7 @@ public class BorrowerServiceImpl implements BorrowerService {
 
         String aadhar = borrowerRequestDto.getAadharCardNumber();
         String pan = borrowerRequestDto.getPanCardNumber();
+        String phone = borrowerRequestDto.getPhoneNumber();
 
         if ((aadhar == null || aadhar.trim().isEmpty()) &&
                 (pan == null || pan.trim().isEmpty())) {
@@ -175,6 +191,20 @@ public class BorrowerServiceImpl implements BorrowerService {
             }
         }
 
+        if (phone != null && !phone.trim().isEmpty())
+        {
+            Optional<Borrower> existingphone = repo.findByPhoneNumber(phone.trim());
+            if (existingphone.isPresent() &&
+                !existingphone.get().getBorrowerId().equals(borrowerId))
+            {
+                return new ApiResponse<>(
+                        ApiStatus.FAILURE,
+                        "failed should be phonenumber already existed",
+                        null
+                );
+            }
+        }
+
         existingBorrower.setBorrowerName(borrowerRequestDto.getBorrowerName());
         existingBorrower.setPhoneNumber(borrowerRequestDto.getPhoneNumber());
         existingBorrower.setPassword(borrowerRequestDto.getPassword());
@@ -184,6 +214,7 @@ public class BorrowerServiceImpl implements BorrowerService {
         existingBorrower.setPincode(borrowerRequestDto.getPincode());
         existingBorrower.setAadharCardNumber(aadhar != null ? aadhar.trim() : null);
         existingBorrower.setPanCardNumber(pan != null ? pan.trim() : null);
+        existingBorrower.setPhoneNumber(phone !=null ? phone.trim() : null);
 
         Borrower updatedBorrower = repo.save(existingBorrower);
 

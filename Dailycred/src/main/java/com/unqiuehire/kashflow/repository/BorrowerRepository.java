@@ -7,8 +7,6 @@ import java.util.Optional;
 
 public interface BorrowerRepository extends JpaRepository<Borrower,Long> {
     Optional<Borrower> findByAadharCardNumber(String aadharCardNumber);
-
-    // 🔹 Check if PAN already exists
     Optional<Borrower> findByPanCardNumber(String panCardNumber);
-    Optional<Borrower> findByPhoneNumber(String phoneNumber);
+    Optional<Borrower> findByPhoneNumber (String phoneNumber);
 }
