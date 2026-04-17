@@ -35,7 +35,7 @@ public class RepaymentServiceImpl implements RepaymentService {
         LoanApplication loanApplication = loanApplicationRepository.findById(request.getLoanApplicationId())
                 .orElseThrow(() -> new RuntimeException("Loan Application not found"));
 
-        //  VALIDATION
+        // = VALIDATION
         if (!loan.getLoanApplicationId().equals(request.getLoanApplicationId())) {
             throw new RuntimeException("Loan mismatch");
         }
