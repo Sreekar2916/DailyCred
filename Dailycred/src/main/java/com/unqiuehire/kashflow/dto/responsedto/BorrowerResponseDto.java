@@ -38,6 +38,6 @@ public class BorrowerResponseDto {
     private String pincode;
     private String address;
     private Integer cibil;
-//    private String aadharCardNumber;
-//    private String panCardNumber;
+    private String aadharCardNumber;
+    private String panCardNumber;
 }
