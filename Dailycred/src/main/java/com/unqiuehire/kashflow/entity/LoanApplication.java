@@ -18,26 +18,46 @@ public class LoanApplication {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long applicationId;
 
-    private Long borrowerId;
-    private Long lenderId;
-    private Long planId;
+    @ManyToOne
+    @JoinColumn(name = "borrower_id", nullable = false)
+    private Borrower borrower;
 
+    @ManyToOne
+    @JoinColumn(name = "plan_id", nullable = false)
+    private LoanPlan loanPlan;
+
+    @Column(nullable = false)
     private Double loanAmount;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ApplicationStatus status;
 
+    @Column(nullable = false)
     private LocalDate applicationDate;
+
     private String rejectionReason;
+
+    @Column(nullable = false)
     private Boolean isLoanCreated = false;
+
+    @Column(nullable = false)
     private LocalDateTime createdAt;
+
     private LocalDateTime updatedAt;
 
     @PrePersist
     public void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.applicationDate = LocalDate.now();
-        this.status = ApplicationStatus.PENDING;
+
+        if (this.status == null) {
+            this.status = ApplicationStatus.PENDING;
+        }
+
+        if (this.isLoanCreated == null) {
+            this.isLoanCreated = false;
+        }
     }
 
     @PreUpdate

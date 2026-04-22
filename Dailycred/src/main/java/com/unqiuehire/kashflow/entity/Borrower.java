@@ -5,9 +5,18 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "borrower")
+@Table(
+        name = "borrower",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_borrower_phone_number", columnNames = "phone_number"),
+                @UniqueConstraint(name = "uk_borrower_aadhar_card_number", columnNames = "aadhar_card_number"),
+                @UniqueConstraint(name = "uk_borrower_pan_card_number", columnNames = "pan_card_number")
+        }
+)
 @Getter
 @Setter
 public class Borrower {
@@ -17,11 +26,8 @@ public class Borrower {
     @Column(name = "borrower_id")
     private Long borrowerId;
 
-    @Column(name = "borrower_name", nullable = false)
+    @Column(name = "borrower_name", nullable = false, length = 100)
     private String borrowerName;
-
-    @Column(name = "cibil", nullable = false)
-    private Integer cibil;
 
     @Column(name = "date_of_birth", nullable = false)
     private LocalDate dateOfBirth;
@@ -32,12 +38,24 @@ public class Borrower {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
-    @Column(name = "phone_number", nullable = false, unique = true)
+    @Column(name = "phone_number", nullable = false, unique = true, length = 20)
     private String phoneNumber;
 
-    @Column(name = "pincode", nullable = false)
+    @Column(name = "pincode", nullable = false, length = 10)
     private String pincode;
 
     @Column(name = "address", nullable = false, length = 500)
     private String address;
+
+    @Column(name = "cibil", nullable = false)
+    private Integer cibil;
+
+    @Column(name = "aadhar_card_number", unique = true, length = 20)
+    private String aadharCardNumber;
+
+    @Column(name = "pan_card_number", unique = true, length = 20)
+    private String panCardNumber;
+
+    @OneToMany(mappedBy = "borrower", cascade = CascadeType.ALL, orphanRemoval = false)
+    private List<LoanApplication> loanApplications = new ArrayList<>();
 }

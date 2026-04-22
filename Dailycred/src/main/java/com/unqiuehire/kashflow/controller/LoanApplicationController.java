@@ -12,6 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/loan-applications")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class LoanApplicationController {
 
     private final LoanApplicationService service;
