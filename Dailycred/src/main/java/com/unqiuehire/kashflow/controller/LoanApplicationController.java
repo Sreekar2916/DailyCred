@@ -1,5 +1,6 @@
 package com.unqiuehire.kashflow.controller;
 
+import com.unqiuehire.kashflow.dto.requestdto.LoanApplicationApprovalRequestDto;
 import com.unqiuehire.kashflow.dto.requestdto.LoanApplicationRequestDto;
 import com.unqiuehire.kashflow.dto.responsedto.ApiResponse;
 import com.unqiuehire.kashflow.dto.responsedto.LoanApplicationResponseDto;
@@ -10,13 +11,41 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/loan-applications")
+@RequestMapping("/api/loan-application")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class LoanApplicationController {
 
     private final LoanApplicationService service;
-
+    //VB
+    @PostMapping("/{lenderId}")
+    public ApiResponse<LoanApplicationResponseDto> applyLoan(
+            @PathVariable Long lenderId,
+            @RequestBody LoanApplicationRequestDto requestDto) {
+        return service.applyLoan(lenderId, requestDto);
+    }
+    //VB
+    @PatchMapping("/{applicationId}/decision")
+    public ApiResponse<LoanApplicationResponseDto> updateLoanDecision(
+            @PathVariable Long applicationId,
+            @RequestBody LoanApplicationApprovalRequestDto requestDto) {
+        return service.updateLoanDecision(applicationId, requestDto);
+    }
+    //vb
+    @GetMapping("/{applicationId}")
+    public ApiResponse<LoanApplicationResponseDto> getApplicationById(@PathVariable Long applicationId) {
+        return service.getApplicationById(applicationId);
+    }
+    //VB
+    @GetMapping("/lenderApplications/{lenderId}")
+    public ApiResponse<List<LoanApplicationResponseDto>> getApplicationsByLenderId(@PathVariable Long lenderId) {
+        return service.getApplicationsByLenderId(lenderId);
+    }
+    //VB
+    @GetMapping("/lenderApplications/{borrowerId}")
+    public ApiResponse<List<LoanApplicationResponseDto>> getApplicationsByBorrowerId(@PathVariable Long borrowerId) {
+        return service.getApplicationsByBorrowerId(borrowerId);
+    }
     @PostMapping
     public ApiResponse<LoanApplicationResponseDto> create(@RequestBody LoanApplicationRequestDto dto) {
         return service.createApplication(dto);

@@ -1,6 +1,7 @@
 package com.unqiuehire.kashflow.serviceImpl;
 
 import com.unqiuehire.kashflow.constant.ApiStatus;
+import com.unqiuehire.kashflow.constant.EmployeeType;
 import com.unqiuehire.kashflow.constant.LoanPlanStatus;
 import com.unqiuehire.kashflow.dto.requestdto.LoanPlanRequest;
 import com.unqiuehire.kashflow.dto.responsedto.ApiResponse;
@@ -45,6 +46,12 @@ public class LoanPlanServiceImpl implements LoanPlanService {
 //        loanPlan.setMaxRadius(request.getMaxRadius());
 
         loanPlan.setMinCibil(request.getMinCibil());
+        loanPlan.setMaxAge(request.getMaxAge());
+        loanPlan.setMinAge(request.getMinAge());
+        loanPlan.setMinMonthlyIncome(request.getMinMonthlyIncome());
+        loanPlan.setServicePinCode(request.getServicePinCode());
+        loanPlan.setMaxActiveLoans(request.getMaxActiveLoans());
+        loanPlan.setEmployeeType(request.getEmployeeType());
 
         // SAFE ENUM CONVERSION
         loanPlan.setStatus(parseStatus(request.getStatus()));
@@ -108,6 +115,12 @@ public class LoanPlanServiceImpl implements LoanPlanService {
 //        plan.setMaxRadius(request.getMaxRadius());
 
         plan.setMinCibil(request.getMinCibil());
+        plan.setMinAge(request.getMinAge());
+        plan.setMaxAge(request.getMaxAge());
+        plan.setMinMonthlyIncome(request.getMinMonthlyIncome());
+        plan.setServicePinCode(request.getServicePinCode());
+        plan.setMaxActiveLoans(request.getMaxActiveLoans());
+        plan.setEmployeeType(request.getEmployeeType());
 
         //  SAFE ENUM
         plan.setStatus(parseStatus(request.getStatus()));
@@ -154,6 +167,12 @@ public class LoanPlanServiceImpl implements LoanPlanService {
 //        response.setMaxRadius(entity.getMaxRadius());
 
         response.setMinCibil(entity.getMinCibil());
+        response.setMinAge(entity.getMinAge());
+        response.setMaxAge(entity.getMaxAge());
+        response.setMinMonthlyIncome(entity.getMinMonthlyIncome());
+        response.setServicePinCode(entity.getServicePinCode());
+        response.setMaxActiveLoans(entity.getMaxActiveLoans());
+        response.setEmployeeType(entity.getEmployeeType());
         response.setStatus(entity.getStatus().name());
 
         return response;

@@ -30,6 +30,10 @@ public class LoanApplication {
     @Column(nullable = false)
     private Double loanAmount;
 
+    @ManyToOne
+    @JoinColumn(name = "lender_id", nullable = false)
+    private Lender lender;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ApplicationStatus status;
@@ -67,6 +71,8 @@ public class LoanApplication {
     private String certificates;
     private String collateral;
 
+    @Column(nullable = false)
+    private LocalDateTime appliedAt;
 
     @PrePersist
     public void onCreate() {

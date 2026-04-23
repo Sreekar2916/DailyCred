@@ -25,7 +25,6 @@ public class LoanPlan {
     private int planDuration;
 //    private double maxRadius;
     private int minCibil;
-
     private Integer minAge;
     private Integer MaxAge;
     private double minMonthlyIncome;
