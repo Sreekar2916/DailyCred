@@ -6,10 +6,8 @@ import com.unqiuehire.kashflow.constant.LoanPlanStatus;
 import com.unqiuehire.kashflow.dto.requestdto.LoanPlanRequest;
 import com.unqiuehire.kashflow.dto.responsedto.ApiResponse;
 import com.unqiuehire.kashflow.dto.responsedto.LoanPlanResponseDto;
-import com.unqiuehire.kashflow.entity.Lender;
 import com.unqiuehire.kashflow.entity.LoanPlan;
 import com.unqiuehire.kashflow.exception.ResourceNotFoundException;
-import com.unqiuehire.kashflow.repository.LenderRepository;
 import com.unqiuehire.kashflow.repository.LoanPlanRepository;
 import com.unqiuehire.kashflow.service.LoanPlanService;
 
@@ -24,12 +22,11 @@ import java.util.stream.Collectors;
 public class LoanPlanServiceImpl implements LoanPlanService {
 
     private final LoanPlanRepository repository;
-    private final LenderRepository lenderRepository;
 
-    // CREATE LOAN PLAN UNDER LENDER
     @Override
-    public ApiResponse<LoanPlanResponseDto> createLoanPlan(Long lenderId, LoanPlanRequest request) {
+    public ApiResponse<LoanPlanResponseDto> createLoanPlan(LoanPlanRequest request) {
 
+<<<<<<< HEAD
         Lender lender = lenderRepository.findById(lenderId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Lender not found: " + lenderId)
@@ -58,12 +55,25 @@ public class LoanPlanServiceImpl implements LoanPlanService {
 
         //  SET RELATION
         loanPlan.setLender(lender);
+=======
+        LoanPlan loanPlan = LoanPlan.builder()
+                .planName(request.getPlanName())
+                .lenderId(request.getLenderId())
+                .amount(request.getAmount())
+                .interestPerDay(request.getInterestPerDay())
+                .penaltyAmount(request.getPenaltyAmount())
+                .planDuration(request.getPlanDuration())
+                .maxRadius(request.getMaxRadius())
+                .minCibil(request.getMinCibil())
+                .status(LoanPlanStatus.valueOf(request.getStatus().toUpperCase()))
+                .build();
+>>>>>>> 2c1920e0214c3274d4759c3e604cd0a918f76f21
 
         LoanPlan saved = repository.save(loanPlan);
 
         return new ApiResponse<>(
                 ApiStatus.SUCCESS,
-                "Loan plan created successfully",
+                "Loan Plan Created",
                 mapToResponse(saved)
         );
     }
@@ -107,6 +117,7 @@ public class LoanPlanServiceImpl implements LoanPlanService {
                 );
 
         plan.setPlanName(request.getPlanName());
+        plan.setLenderId(request.getLenderId());
         plan.setAmount(request.getAmount());
         plan.setInterestPerDay(request.getInterestPerDay());
         plan.setPenaltyAmount(request.getPenaltyAmount());
@@ -115,6 +126,7 @@ public class LoanPlanServiceImpl implements LoanPlanService {
 //        plan.setMaxRadius(request.getMaxRadius());
 
         plan.setMinCibil(request.getMinCibil());
+<<<<<<< HEAD
         plan.setMinAge(request.getMinAge());
         plan.setMaxAge(request.getMaxAge());
         plan.setMinMonthlyIncome(request.getMinMonthlyIncome());
@@ -124,6 +136,9 @@ public class LoanPlanServiceImpl implements LoanPlanService {
 
         //  SAFE ENUM
         plan.setStatus(parseStatus(request.getStatus()));
+=======
+        plan.setStatus(LoanPlanStatus.valueOf(request.getStatus().toUpperCase()));
+>>>>>>> 2c1920e0214c3274d4759c3e604cd0a918f76f21
 
         LoanPlan updated = repository.save(plan);
 
@@ -150,6 +165,7 @@ public class LoanPlanServiceImpl implements LoanPlanService {
                 "Deleted successfully"
         );
     }
+<<<<<<< HEAD
 
     // MAPPING METHOD
     private LoanPlanResponseDto mapToResponse(LoanPlan entity) {
@@ -185,5 +201,20 @@ public class LoanPlanServiceImpl implements LoanPlanService {
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid LoanPlan status: " + status);
         }
+=======
+    private LoanPlanResponseDto mapToResponse(LoanPlan loanPlan) {
+        return LoanPlanResponseDto.builder()
+                .id(loanPlan.getId())
+                .planName(loanPlan.getPlanName())
+                .lenderId(loanPlan.getLenderId())
+                .amount(loanPlan.getAmount())
+                .interestPerDay(loanPlan.getInterestPerDay())
+                .penaltyAmount(loanPlan.getPenaltyAmount())
+                .planDuration(loanPlan.getPlanDuration())
+                .maxRadius(loanPlan.getMaxRadius())
+                .minCibil(loanPlan.getMinCibil())
+                .status(loanPlan.getStatus().name())
+                .build();
+>>>>>>> 2c1920e0214c3274d4759c3e604cd0a918f76f21
     }
 }

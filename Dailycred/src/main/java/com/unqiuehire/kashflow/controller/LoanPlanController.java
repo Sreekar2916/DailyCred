@@ -17,7 +17,10 @@ public class LoanPlanController {
 
     private final LoanPlanService service;
 
-
+    @PostMapping
+    public ApiResponse<LoanPlanResponseDto> create(@RequestBody LoanPlanRequest request) {
+        return service.createLoanPlan(request);
+    }
 
     @GetMapping("/{id}")
     public ApiResponse<LoanPlanResponseDto> getById(@PathVariable Long id) {
@@ -40,13 +43,4 @@ public class LoanPlanController {
     public ApiResponse<String> delete(@PathVariable Long id) {
         return service.deleteLoanPlan(id);
     }
-
-    @PostMapping("/lenders/{lenderId}/loan-plans")
-    public ApiResponse<LoanPlanResponseDto> create(
-            @PathVariable Long lenderId,
-            @RequestBody LoanPlanRequest request) {
-
-        return service.createLoanPlan(lenderId, request);
-    }
-
 }

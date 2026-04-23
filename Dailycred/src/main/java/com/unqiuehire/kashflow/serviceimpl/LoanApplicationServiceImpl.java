@@ -10,12 +10,10 @@ import com.unqiuehire.kashflow.dto.responsedto.LoanApplicationResponseDto;
 import com.unqiuehire.kashflow.entity.Borrower;
 import com.unqiuehire.kashflow.entity.Lender;
 import com.unqiuehire.kashflow.entity.LoanApplication;
-import com.unqiuehire.kashflow.entity.LoanPlan;
 import com.unqiuehire.kashflow.exception.ResourceNotFoundException;
 import com.unqiuehire.kashflow.repository.BorrowerRepository;
 import com.unqiuehire.kashflow.repository.LenderRepository;
 import com.unqiuehire.kashflow.repository.LoanApplicationRepository;
-import com.unqiuehire.kashflow.repository.LoanPlanRepository;
 import com.unqiuehire.kashflow.service.LoanApplicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,14 +29,19 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class LoanApplicationServiceImpl implements LoanApplicationService {
 
+<<<<<<< HEAD
     private final LoanApplicationRepository loanApplicationRepository;
     private final LoanPlanRepository loanPlanRepository;
     private final BorrowerRepository borrowerRepository;
     private final LenderRepository lenderRepository;
+=======
+    private final LoanApplicationRepository repository;
+>>>>>>> 2c1920e0214c3274d4759c3e604cd0a918f76f21
 
     @Override
     public ApiResponse<LoanApplicationResponseDto> applyLoan(Long lenderId, LoanApplicationRequestDto requestDto) {
 
+<<<<<<< HEAD
         if (requestDto == null) {
             return new ApiResponse<>(ApiStatus.FAILURE, "Loan application request cannot be null", null);
         }
@@ -50,6 +53,14 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         if (requestDto.getPlanId() == null) {
             return new ApiResponse<>(ApiStatus.FAILURE, "Plan id is required", null);
         }
+=======
+        LoanApplication app = new LoanApplication();
+
+        app.setBorrowerId(dto.getBorrowerId());
+        app.setLenderId(dto.getLenderId());
+        app.setPlanId(dto.getPlanId());
+        app.setLoanAmount(dto.getLoanAmount());
+>>>>>>> 2c1920e0214c3274d4759c3e604cd0a918f76f21
 
         if (requestDto.getLoanAmount() == null || requestDto.getLoanAmount() <= 0) {
             return new ApiResponse<>(ApiStatus.FAILURE, "Loan amount must be greater than zero", null);
@@ -181,10 +192,16 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     }
 
     @Override
+<<<<<<< HEAD
     public ApiResponse<LoanApplicationResponseDto> updateLoanDecision(Long applicationId, LoanApplicationApprovalRequestDto requestDto) {
 
         LoanApplication application = loanApplicationRepository.findById(applicationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Loan application not found"));
+=======
+    public ApiResponse<LoanApplicationResponseDto> getById(Long id) {
+        LoanApplication app = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Application not found"));
+>>>>>>> 2c1920e0214c3274d4759c3e604cd0a918f76f21
 
         if (requestDto == null) {
             return new ApiResponse<>(ApiStatus.FAILURE, "Approval request cannot be null", null);
@@ -296,7 +313,16 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
 
+<<<<<<< HEAD
         return new ApiResponse<>(ApiStatus.SUCCESS, "Lender applications fetched successfully", list);
+=======
+        List<LoanApplicationResponseDto> list = repository.findByLenderId(lenderId)
+                .stream()
+                .map(this::mapToDto)
+                .toList();
+
+        return new ApiResponse<>(ApiStatus.SUCCESS, "Fetched", list);
+>>>>>>> 2c1920e0214c3274d4759c3e604cd0a918f76f21
     }
 
     @Override
@@ -326,9 +352,15 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         LoanApplicationResponseDto dto = new LoanApplicationResponseDto();
 
         dto.setApplicationId(app.getApplicationId());
+<<<<<<< HEAD
         dto.setBorrowerId(app.getBorrower() != null ? app.getBorrower().getBorrowerId() : null);
         dto.setLenderId(app.getLender() != null ? app.getLender().getLenderId() : null);
         dto.setPlanId(app.getLoanPlan() != null ? app.getLoanPlan().getId() : null);
+=======
+        dto.setBorrowerId(app.getBorrowerId());
+        dto.setLenderId(app.getLenderId());
+        dto.setPlanId(app.getPlanId());
+>>>>>>> 2c1920e0214c3274d4759c3e604cd0a918f76f21
         dto.setLoanAmount(app.getLoanAmount());
         dto.setAge(app.getAge());
         dto.setMonthlyIncome(app.getMonthlyIncome());
