@@ -1,5 +1,6 @@
 package com.unqiuehire.kashflow.serviceimpl;
 
+import com.unqiuehire.kashflow.constant.ApplicationStatus;
 import com.unqiuehire.kashflow.constant.PaymentStatus;
 import com.unqiuehire.kashflow.dto.requestdto.RepaymentRequestDTO;
 import com.unqiuehire.kashflow.dto.responsedto.RepaymentResponseDTO;
@@ -35,7 +36,12 @@ public class RepaymentServiceImpl implements RepaymentService {
                 .orElseThrow(() -> new RuntimeException("Loan not found"));
 
         LoanApplication loanApplication = loanApplicationRepository.findById(request.getLoanApplicationId())
-                .orElseThrow(() -> new RuntimeException("Loan Application not found"));
+        .orElseThrow(() -> new RuntimeException("Loan Application not found"));
+
+        if (loanApplication.getStatus() != ApplicationStatus.APPROVED) {
+            throw new RuntimeException("Loan not approved yet");
+        }
+
 
         if (!loan.getLoanApplicationId().equals(request.getLoanApplicationId())) {
             throw new RuntimeException("Loan and Loan Application mismatch");

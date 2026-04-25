@@ -1,8 +1,9 @@
-package com.unqiuehire.kashflow.serviceImpl;
+package com.unqiuehire.kashflow.serviceimpl;
 import com.unqiuehire.kashflow.constant.ApiStatus;
 import com.unqiuehire.kashflow.constant.ApplicationStatus;
 import com.unqiuehire.kashflow.dto.requestdto.LoanApplicationApprovalRequestDto;
 import com.unqiuehire.kashflow.dto.requestdto.LoanApplicationRequestDto;
+import com.unqiuehire.kashflow.dto.requestdto.LoanRequestDto;
 import com.unqiuehire.kashflow.dto.responsedto.ApiResponse;
 import com.unqiuehire.kashflow.dto.responsedto.LoanApplicationResponseDto;
 import com.unqiuehire.kashflow.entity.Borrower;
@@ -14,12 +15,11 @@ import com.unqiuehire.kashflow.repository.LenderRepository;
 import com.unqiuehire.kashflow.repository.LoanApplicationRepository;
 import com.unqiuehire.kashflow.repository.LoanPlanRepository;
 import com.unqiuehire.kashflow.service.LoanApplicationService;
+import com.unqiuehire.kashflow.service.LoanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,6 +37,8 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     private BorrowerRepository borrowerRepository;
     @Autowired
     private LenderRepository lenderRepository;
+    @Autowired
+    private LoanService loanService;
 
     @Override
     public ApiResponse<LoanApplicationResponseDto> applyLoan(Long borrowerId, Long lenderId,Long planId, LoanApplicationRequestDto requestDto) {
@@ -168,6 +170,32 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         }
 
         application.setUpdatedAt(java.time.LocalDateTime.now());
+
+        if (requestDto.getApplicationStatus() == ApplicationStatus.APPROVED) {
+
+            if (!application.getIsLoanCreated()) {
+
+                LoanRequestDto loanRequest = new LoanRequestDto();
+
+                loanRequest.setLoanApplicationId(application.getApplicationId());
+                loanRequest.setBorrowerId(application.getBorrower().getBorrowerId());
+                loanRequest.setLenderId(application.getLender().getLenderId());
+                loanRequest.setPlanId(application.getLoanPlan().getId());
+
+                loanRequest.setSanctionedAmount(application.getLoanAmount());
+                loanRequest.setTotalAmount(application.getLoanAmount());
+
+                loanRequest.setTenureDays(application.getLoanPlan().getPlanDuration());
+                loanRequest.setInterestPerDay(application.getLoanPlan().getInterestPerDay());
+                loanRequest.setPenaltyAmount(application.getLoanPlan().getPenaltyAmount());
+
+                loanRequest.setStartDate(LocalDate.now()); // 🔥 repayment starts here
+
+                loanService.createLoan(loanRequest); // 🔥 creates loan + wallet flow
+
+                application.setIsLoanCreated(true);
+            }
+        }
 
         LoanApplication updated = loanApplicationRepository.save(application);
 
