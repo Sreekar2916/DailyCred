@@ -1,4 +1,4 @@
-package com.unqiuehire.kashflow.serviceImpl;
+package com.unqiuehire.kashflow.serviceimpl;
 
 import com.unqiuehire.kashflow.constant.ApiStatus;
 import com.unqiuehire.kashflow.constant.LoanPlanStatus;
@@ -25,7 +25,6 @@ public class LoanPlanServiceImpl implements LoanPlanService {
     private final LoanPlanRepository repository;
     private final LenderRepository lenderRepository;
 
-    // CREATE LOAN PLAN UNDER LENDER
     @Override
     public ApiResponse<LoanPlanResponseDto> createLoanPlan(Long lenderId, LoanPlanRequest request) {
 
@@ -44,10 +43,8 @@ public class LoanPlanServiceImpl implements LoanPlanService {
         loanPlan.setMaxRadius(request.getMaxRadius());
         loanPlan.setMinCibil(request.getMinCibil());
 
-        // SAFE ENUM CONVERSION
         loanPlan.setStatus(parseStatus(request.getStatus()));
 
-        //  SET RELATION
         loanPlan.setLender(lender);
 
         LoanPlan saved = repository.save(loanPlan);
@@ -134,7 +131,7 @@ public class LoanPlanServiceImpl implements LoanPlanService {
         );
     }
 
-    // MAPPING METHOD
+
     private LoanPlanResponseDto mapToResponse(LoanPlan entity) {
 
         LoanPlanResponseDto response = new LoanPlanResponseDto();
@@ -153,7 +150,6 @@ public class LoanPlanServiceImpl implements LoanPlanService {
         return response;
     }
 
-    //  SAFE ENUM PARSER (NEW)
     private LoanPlanStatus parseStatus(String status) {
         try {
             return LoanPlanStatus.valueOf(status.toUpperCase());

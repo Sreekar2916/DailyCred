@@ -7,5 +7,5 @@ public interface LenderRepository extends JpaRepository<Lender, Long> {
 
     boolean existsByPanCardNumber(String panCardNumber);
 
-    boolean findByPhoneNumber(String phoneNumber);
+    boolean existsByPhoneNumber(String phoneNumber);
 }

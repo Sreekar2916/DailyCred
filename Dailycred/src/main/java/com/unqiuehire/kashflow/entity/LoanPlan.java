@@ -35,20 +35,4 @@ public class LoanPlan {
 
     @OneToMany(mappedBy = "loanPlan", cascade = CascadeType.ALL)
     private List<LoanApplication> applications;
-
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
-//
-//    private String planName;
-//    private Long lenderId;
-//    private double amount;
-//    private double interestPerDay;
-//    private double penaltyAmount;
-//    private int planDuration;
-//    private double maxRadius;
-//    private int minCibil;
-//
-//    @Enumerated(EnumType.STRING)
-//    private LoanPlanStatus status;
 }
