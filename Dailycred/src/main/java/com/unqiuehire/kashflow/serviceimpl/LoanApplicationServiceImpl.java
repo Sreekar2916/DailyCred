@@ -29,10 +29,8 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
     @Autowired
     private LoanApplicationRepository loanApplicationRepository;
-
     @Autowired
     private LoanPlanRepository loanPlanRepository;
-
     @Autowired
     private BorrowerRepository borrowerRepository;
     @Autowired
@@ -56,6 +54,22 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         Optional<LoanPlan> planOptional = loanPlanRepository.findById(planId);
         if (planOptional.isEmpty()) {
             return new ApiResponse<>(ApiStatus.FAILURE, "Loan plan not found", null);
+        }
+
+        boolean alreadyApplied =
+                loanApplicationRepository.existsByBorrower_BorrowerIdAndLender_LenderIdAndLoanPlan_IdAndStatusIn(
+                        borrowerId,
+                        lenderId,
+                        planId,
+                        List.of(ApplicationStatus.PENDING, ApplicationStatus.APPROVED)
+                );
+
+        if (alreadyApplied) {
+            return new ApiResponse<>(
+                    ApiStatus.FAILURE,
+                    "Borrower already applied for this loan plan",
+                    null
+            );
         }
 
         Borrower borrower = borrowerOptional.get();
@@ -172,7 +186,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         application.setUpdatedAt(java.time.LocalDateTime.now());
 
         if (requestDto.getApplicationStatus() == ApplicationStatus.APPROVED) {
-
+            handleLoanApproval(application);
             if (!application.getIsLoanCreated()) {
 
                 LoanRequestDto loanRequest = new LoanRequestDto();
@@ -204,6 +218,39 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 "Loan application decision updated successfully",
                 mapToResponse(updated)
         );
+    }
+    private void handleLoanApproval(LoanApplication application) {
+
+        //Prevent duplicate loan creation
+        if (Boolean.TRUE.equals(application.getIsLoanCreated())) {
+            return;
+        }
+
+        LoanRequestDto loanRequest = new LoanRequestDto();
+
+        //Mapping
+        loanRequest.setLoanApplicationId(application.getApplicationId());
+        loanRequest.setBorrowerId(application.getBorrower().getBorrowerId());
+        loanRequest.setLenderId(application.getLender().getLenderId());
+        loanRequest.setPlanId(application.getLoanPlan().getId());
+
+        //Financials
+        loanRequest.setSanctionedAmount(application.getLoanAmount());
+        loanRequest.setTotalAmount(application.getLoanAmount());
+
+        //Plan details
+        loanRequest.setTenureDays(application.getLoanPlan().getPlanDuration());
+        loanRequest.setInterestPerDay(application.getLoanPlan().getInterestPerDay());
+        loanRequest.setPenaltyAmount(application.getLoanPlan().getPenaltyAmount());
+
+        // Dates
+        loanRequest.setStartDate(LocalDate.now());
+
+        // CREATE LOAN
+        loanService.createLoan(loanRequest);
+
+        //  mark as created
+        application.setIsLoanCreated(true);
     }
 
     @Override
