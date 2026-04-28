@@ -186,7 +186,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         application.setUpdatedAt(java.time.LocalDateTime.now());
 
         if (requestDto.getApplicationStatus() == ApplicationStatus.APPROVED) {
-
+            handleLoanApproval(application);
             if (!application.getIsLoanCreated()) {
 
                 LoanRequestDto loanRequest = new LoanRequestDto();
@@ -218,6 +218,39 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 "Loan application decision updated successfully",
                 mapToResponse(updated)
         );
+    }
+    private void handleLoanApproval(LoanApplication application) {
+
+        //Prevent duplicate loan creation
+        if (Boolean.TRUE.equals(application.getIsLoanCreated())) {
+            return;
+        }
+
+        LoanRequestDto loanRequest = new LoanRequestDto();
+
+        //Mapping
+        loanRequest.setLoanApplicationId(application.getApplicationId());
+        loanRequest.setBorrowerId(application.getBorrower().getBorrowerId());
+        loanRequest.setLenderId(application.getLender().getLenderId());
+        loanRequest.setPlanId(application.getLoanPlan().getId());
+
+        //Financials
+        loanRequest.setSanctionedAmount(application.getLoanAmount());
+        loanRequest.setTotalAmount(application.getLoanAmount());
+
+        //Plan details
+        loanRequest.setTenureDays(application.getLoanPlan().getPlanDuration());
+        loanRequest.setInterestPerDay(application.getLoanPlan().getInterestPerDay());
+        loanRequest.setPenaltyAmount(application.getLoanPlan().getPenaltyAmount());
+
+        // Dates
+        loanRequest.setStartDate(LocalDate.now());
+
+        // CREATE LOAN
+        loanService.createLoan(loanRequest);
+
+        //  mark as created
+        application.setIsLoanCreated(true);
     }
 
     @Override
